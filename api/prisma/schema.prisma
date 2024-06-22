@@ -17,5 +17,33 @@ model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   auth0Id      String   @unique @default("")
-  name         String?
+  name         String
+  orders       Order[]
+}
+
+model Order {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  items        OrderItem[]
+  address      String
+  postalCode   String
+}
+
+model Item {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String
+  image        String
+  orderItems   OrderItem[]
+}
+
+model OrderItem {
+  id        Int   @id @default(autoincrement())
+  orderId   Int
+  order     Order @relation(fields: [orderId], references: [id])
+  itemId    Int
+  item      Item  @relation(fields: [itemId], references: [id])
+  quantity  Int
 }
