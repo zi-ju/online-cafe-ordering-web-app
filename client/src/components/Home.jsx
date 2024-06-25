@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Home() {
-  const [bestSeller, setBestSeller] = useState([]);
+  const [bestSeller, setBestSeller] = useState(null);
+  const [bestSellerMessage, setBestSellerMessage] = useState('');
   const [latestOrder, setLatestOrder] = useState([]);
   const { user, isAuthenticated } = useAuth0();
 
@@ -19,7 +20,13 @@ export default function Home() {
           },
           });
           const bestSeller = await response.json();
-          setBestSeller(bestSeller);
+          if (bestSeller.message) {
+            setBestSeller(null);
+            setBestSellerMessage(bestSeller.message);
+          } else {
+            setBestSeller(bestSeller);
+            setBestSellerMessage('');
+          }
       } catch (error) {
         console.error('Error fetching best seller:', error);
       }
@@ -59,8 +66,14 @@ export default function Home() {
       </div>
       <div>
         <h2>Trending🔥</h2>
-        <h3>{bestSeller.name}</h3>
-        <p>{bestSeller.description}</p>
+        {bestSeller ? (
+          <div>
+            <h3>{bestSeller.name}</h3>
+            <p>{bestSeller.description}</p>
+          </div>
+        ) : (
+          <p>{bestSellerMessage}</p>
+        )}
       </div>
       {isAuthenticated ? (
         <div>
@@ -68,7 +81,7 @@ export default function Home() {
           {(latestOrder !== null && typeof latestOrder === 'object' && !Array.isArray(latestOrder)) ? (
             <p>Last time you ordered: {latestOrder.items.map(orderItem => orderItem.item.name).join(', ')}</p>
           ) : (
-            <p>No orders found.</p>
+            <p>You haven't placed any order yet.</p>
           )}
         </div>
       ): (

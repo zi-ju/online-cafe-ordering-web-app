@@ -6,6 +6,8 @@ import morgan from "morgan";
 import cors from "cors";
 import { auth } from "express-oauth2-jwt-bearer";
 
+const { Decimal } = pkg;
+
 // this is a middleware that will validate the access token sent by the client
 const requireAuth = auth({
   audience: process.env.AUTH0_AUDIENCE,
@@ -110,11 +112,17 @@ app.get('/users', async (req, res) => {
 app.post('/order-items', async (req, res) => {
   const { orderId, itemId, quantity } = req.body;
   try {
+    // fetch the item price
+    const item = await prisma.item.findUnique({
+      where: { id: itemId },
+    });
+    // create the orderItem
     const orderItem = await prisma.orderItem.create({
       data: {
         orderId,
         itemId,
         quantity,
+        price: item.price,
       },
     });
     res.status(201).json(orderItem);
@@ -125,19 +133,43 @@ app.post('/order-items', async (req, res) => {
 
 // Create a new order
 app.post('/orders', async (req, res) => {
-  const { userId, address, postalCode, items } = req.body;
+  const { userId, address, postalCode, items, deliveryFee } = req.body;
   try {
+    // Fetch items with their prices
+    const itemDetails = await prisma.item.findMany({
+      where: {
+        id: {
+          in: items.map(item => item.itemId),
+        },
+      },
+    });
+    // Create order items with prices
+    const orderItemsData = items.map(item => {
+      const itemDetail = itemDetails.find(detail => detail.id === item.itemId);
+      return {
+        itemId: item.itemId,
+        quantity: item.quantity,
+        price: itemDetail.price, 
+      };
+    });
+    // Calculate the total price before creating the order
+    const totalPrice = orderItemsData.reduce((total, item) => {
+      return total.plus(new Decimal(item.price).times(item.quantity));
+    }, new Decimal(0));
+    // Add delivery fee to the total price
+    totalPrice.plus(new Decimal(deliveryFee));
+
+    // Create the order
     const order = await prisma.order.create({
       data: {
         userId,
         address,
         postalCode,
         items: {
-          create: items.map(item => ({
-            itemId: item.itemId,
-            quantity: item.quantity,
-          })),
+          create: orderItemsData,
         },
+        deliveryFee,
+        totalPrice,
       },
       include: {
         items: true,
@@ -158,6 +190,10 @@ app.get('/orders/:id', async (req, res) => {
       include: {
         items: true,
         user: true,
+        deliveryFee: true,
+        totalPrice: true,
+        address: true,
+        postalCode: true,
       },
     });
     if (!order) {
@@ -198,10 +234,12 @@ app.get('/users/orders', async (req, res) => {
         user: true,
       },
     });
+    if (orders.length === 0) {
+      return;
+    }
     res.status(200).json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -238,7 +276,8 @@ app.get('/users/latest-order', async (req, res) => {
       },
     });
     if (!latestOrder) {
-      return res.status(404).json({ message: 'No orders found for this user' });
+      // return res.status(404).json({ message: 'No orders found for this user' });
+      return;
     }
     res.status(200).json(latestOrder);
   } catch (error) {
@@ -249,10 +288,10 @@ app.get('/users/latest-order', async (req, res) => {
 
 // Create a new item
 app.post('/items', async (req, res) => {
-  const { name, description, image } = req.body;
+  const { name, description, image, price } = req.body;
   try {
     const item = await prisma.item.create({
-      data: { name, description, image },
+      data: { name, description, image, price},
     });
     res.status(201).json(item);
   } catch (error) {
@@ -293,7 +332,7 @@ app.get('/best-seller', async (req, res) => {
       return res.status(200).json(bestSellerItem);
     }
 
-    return res.status(404).json({ message: 'No items found.' });
+    return res.status(200).json({ message: 'Nothing trending this time.' });
   } catch (error) {
     console.error('Error finding best seller item:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -341,6 +380,25 @@ app.post("/verify-user", requireAuth, async (req, res) => {
     res.json(newUser);
   }
 });
+
+
+// // Server acts as a proxy, forwarding the request to the Google Maps API
+// // and returning the response to the client
+// app.get('/calculate-distance', async (req, res) => {
+//   const { origin, destination, apiKey } = req.query;
+//   try {
+//     const response = await fetch(
+//       `https://maps.googleapis.com/maps/api/distancematrix/json
+//       ?origins=${encodeURIComponent(origin)}
+//       &destinations=${encodeURIComponent(destination)}
+//       &key=${apiKey}`);
+//     const data = await response.json();
+//     res.json(data);
+//   } catch (error) {
+//     console.error('Error fetching distance:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 app.listen(8000, () => {
   console.log("Server running on http://localhost:8000 🎉 🚀");

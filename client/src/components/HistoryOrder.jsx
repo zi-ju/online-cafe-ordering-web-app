@@ -24,7 +24,8 @@ export default function HistoryOrder() {
     }, []);
 
     // Sort orders by createdAt in descending order
-    const sortedOrderHistory = orderHistory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sortedOrderHistory = orderHistory.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
 
 
     return (
@@ -46,6 +47,8 @@ export default function HistoryOrder() {
                     </li>
                   ))}
                 </ul>
+                <h3>Total Price: ${order.totalPrice}</h3>
+                <h3>Delivery Information:</h3>
                 <p>Address: {order.address}</p>
                 <p>Postal Code: {order.postalCode}</p>
               </div>

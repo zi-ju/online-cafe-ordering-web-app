@@ -4,16 +4,22 @@ import { useAuthToken } from "../AuthTokenContext";
 import { useAuth0 } from '@auth0/auth0-react';
 
 const defaultItems = [
-  { id: 1, name: 'Espresso', description: 'espresso description', image: 'espresso.jpg' },
-  { id: 2, name: 'Latte', description: 'latte description', image: 'latte.jpg' },
-  { id: 3, name: 'Cappuccino', description: 'cappuccino description', image: 'cappuccino.jpg' },
+  { id: 1, name: 'Espresso', description: 'A good Espresso', image: 'espresso.jpg', price: 2.5},
+  { id: 2, name: 'Latte', description: 'A good Latte', image: 'latte.jpg', price: 3.5},
+  { id: 3, name: 'Cappuccino', description: 'A good Cappuccino', image: 'cappuccino.jpg', price: 4.0},
 ];
+
+const STORE_ADDRESS = "410 W Georgia St, Vancouver, BC V6B 1Z3, Canada";
+const STORE_ADDRESS_LAT = 49.2806361;
+const STORE_ADDRESS_LNG = -123.1159038;
 
 export default function Menu() {
   const [items, setItems] = useState(defaultItems);
   const [order, setOrder] = useState([]);
   const [address, setAddress] = useState('');
   const [postalCode, setPostalCode] = useState('');
+  const [deliveryFee, setDeliveryFee] = useState(null);
+  const [serviceAvailable, setServiceAvailable] = useState(true);
   const { accessToken } = useAuthToken();
   const { getAccessTokenSilently, user, isAuthenticated, isLoading } = useAuth0();
 
@@ -76,6 +82,69 @@ export default function Menu() {
     setPostalCode(e.target.value);
   };
 
+  const handleCalculateDeliveryFee = async () => {
+    try {
+      setDeliveryFee(null);
+      setServiceAvailable(true);
+
+      // get lat and lng of the delivery address from postal code
+      const addressUrl = 'https://map-geocoding.p.rapidapi.com/json?address=' + encodeURIComponent(postalCode);
+      const addressOptions = {
+        method: 'GET',
+        headers: {
+          'x-rapidapi-key': '58cad3c0ccmsh837c4462d52b4bdp10141djsn061b068caf24',
+          'x-rapidapi-host': 'map-geocoding.p.rapidapi.com'
+        }
+      };
+      const addressResponse = await fetch(addressUrl, addressOptions);
+      const addressData = await addressResponse.json();
+      const destinationLatitude = addressData.results[0].geometry.location.lat;
+      const destinationLongitude = addressData.results[0].geometry.location.lng;
+      
+      const distanceUrl = `https://trueway-matrix.p.rapidapi.com/CalculateDrivingMatrix?origins=${STORE_ADDRESS_LAT}%2C${STORE_ADDRESS_LNG}&destinations=${destinationLatitude}%2C${destinationLongitude}`;
+      const distanceOptions = {
+        method: 'GET',
+        headers: {
+          'x-rapidapi-key': '58cad3c0ccmsh837c4462d52b4bdp10141djsn061b068caf24',
+          'x-rapidapi-host': 'trueway-matrix.p.rapidapi.com'
+        }
+      };
+      const distanceResponse = await fetch(distanceUrl, distanceOptions);
+      const distanceResult = await distanceResponse.json();
+      const distanceInKm = distanceResult.distances[0][0] / 1000;
+
+      // calculate delivery fee based on distance
+      let deliveryFee = 0;
+      if (distanceInKm < 5.00) {
+        deliveryFee = 1.0;
+      } else if (distanceInKm < 13.00) {
+        deliveryFee = 1.5;
+      } else if (distanceInKm < 20.00) {
+        deliveryFee = 2.0;
+      } else {
+        setServiceAvailable(false);
+        setDeliveryFee(null);
+        return;
+      }
+      setServiceAvailable(true);
+      setDeliveryFee(deliveryFee.toFixed(1));
+
+    } catch (error) {
+      console.error('Error calculating delivery fee:', error);
+      setDeliveryFee(null); 
+    }
+  };
+
+  const calculateTotalFee = (order) => {
+    return order.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  };
+
+  const calculateTotalWithDeliveryFee = (order, deliveryFee) => {
+    const previousTotal = order.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return previousTotal + parseFloat(deliveryFee);
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated || isLoading || !user) {
@@ -114,14 +183,15 @@ export default function Menu() {
           itemId: item.id,
           quantity: item.quantity,
         })),
+        deliveryFee,
       }),
     });
     alert('Order placed successfully!');
     setOrder([]);
     setAddress('');
     setPostalCode('');
+    setDeliveryFee(null);
   };
-
 
     return (
       <div>
@@ -133,6 +203,7 @@ export default function Menu() {
               {/* <img src={item.image} alt={item.name} /> */}
               <h2>{item.name}</h2>
               <p>{item.description}</p>
+              <p>${item.price}</p>
               {/* <a href={item.detailLink}>View Details</a> */}
               <button onClick={() => addToOrder(item)}>Add to Order</button>
             </div>
@@ -143,12 +214,13 @@ export default function Menu() {
         <ul>
           {order.map((item) => (
             <li key={item.id}>
-              {item.name} - {item.quantity}
+              {item.name} - {item.quantity} = ${item.price * item.quantity}
               <button onClick={() => increaseQuantity(item)}>+</button>
               <button onClick={() => decreaseQuantity(item)}>-</button>
             </li>
           ))}
         </ul>
+        <p>Total: ${calculateTotalFee(order)}</p>
 
         <h2>Delivery Information</h2>
         <form onSubmit={handleSubmit} className="address-form">
@@ -172,6 +244,17 @@ export default function Menu() {
               required
             />
           </div>
+          <button type="button" onClick={handleCalculateDeliveryFee}>
+            Calculate Delivery Fee
+          </button>
+          {deliveryFee !== null ? (
+            <div>
+              <p>Delivery Fee: ${deliveryFee}</p>
+              <p>Total With Delivery Fee: {calculateTotalWithDeliveryFee(order, deliveryFee)}</p>
+            </div>
+          ) : !serviceAvailable ? (
+            <p>Delivery service not available for this distance.</p>
+          ) : null}
           {isAuthenticated ? 
           <button type="submit">Place Order</button> 
           : 

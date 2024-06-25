@@ -29,6 +29,8 @@ model Order {
   items        OrderItem[]
   address      String
   postalCode   String
+  deliveryFee  Decimal   @db.Decimal(10, 2)
+  totalPrice   Decimal   @db.Decimal(10, 2)
 }
 
 model Item {
@@ -36,6 +38,7 @@ model Item {
   name         String
   description  String
   image        String
+  price        Decimal   @db.Decimal(10, 2)
   orderItems   OrderItem[]
 }
 
@@ -46,4 +49,5 @@ model OrderItem {
   itemId    Int
   item      Item  @relation(fields: [itemId], references: [id])
   quantity  Int
+  price     Decimal @db.Decimal(10, 2) 
 }
