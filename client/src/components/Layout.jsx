@@ -1,5 +1,6 @@
-import { Outlet, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import "../style/appLayout.css";
 
 export default function Layout() {
     const { isAuthenticated, loginWithRedirect } = useAuth0();

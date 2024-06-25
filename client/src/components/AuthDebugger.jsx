@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuthToken } from "../AuthTokenContext";
+import '../style/authDebugger.css';
 
 export default function AuthDebugger() {
   const { user } = useAuth0();

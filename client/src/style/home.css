@@ -1,0 +1,132 @@
+/* General styles */
+body {
+font-family: Arial, sans-serif;
+background-color: #f4f4f4;
+margin: 0;
+padding: 0;
+}
+  
+h1, h2, h3 {
+color: #00754a;
+margin: 0;
+}
+
+p {
+color: #666;
+line-height: 1.6;
+}
+
+/* Layout styles */
+.home h2 {
+font-size: 2rem; 
+color: #00754a; 
+margin-bottom: 15px;
+text-align: center;
+}
+
+.home img {
+width: 100%;
+max-width: 100%;
+height: auto;
+border-radius: 8px;
+}
+
+/* Best seller styles */
+.best-seller {
+margin-top: 20px;
+padding: 20px;
+background-color: #fff;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+border-radius: 8px;
+}
+
+.best-seller-wrapper {
+display: flex;
+}
+
+.best-seller-image {
+width: 50%;
+}
+
+.best-seller h3 {
+font-size: 1.5rem;
+color: #0e3325;
+margin-bottom: 10px;
+}
+
+.best-seller p {
+font-size: 1rem;
+color: #666;
+}
+
+.best-seller img {
+width: 80%;
+height: auto;
+display: block;
+border-radius: 8px;
+}
+
+/* Welcome styles */
+.home .welcome, .home .welcome-back {
+margin-top: 20px;
+padding: 20px;
+background-color: #fff;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+border-radius: 8px;
+text-align: center;
+}
+
+.home .welcome h2, .home .welcome-back h2 {
+font-size: 1.5rem;
+color: #00754a;
+}
+
+.home .welcome p, .home .welcome-back p {
+font-size: 1rem;
+color: #666;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+.home {
+    padding: 10px;
+}
+
+.home .best-seller, .home .welcome, .home .welcome-back {
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.home .best-seller h3, .home .welcome h2, .home .welcome-back h2 {
+    font-size: 1.2rem;
+}
+
+.home .best-seller img {
+    width: 100%;
+    max-width: 300px;
+}
+
+.home .best-seller p, .home .welcome p, .home .welcome-back p {
+    font-size: 0.9rem;
+}
+}
+
+@media (max-width: 480px) {
+.home .best-seller, .home .welcome, .home .welcome-back {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.home .best-seller h3, .home .welcome h2, .home .welcome-back h2 {
+    font-size: 1rem;
+}
+
+.home .best-seller img {
+    width: 100%;
+    max-width: 250px; 
+}
+
+.home .best-seller p, .home .welcome p, .home .welcome-back p {
+    font-size: 0.8rem;
+}
+}

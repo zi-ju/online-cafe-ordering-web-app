@@ -63,19 +63,24 @@ export default function Home() {
       <div>
       <img src={`${process.env.PUBLIC_URL}/Cafe.jpg`} alt="cafe" />
       </div>
-      <div>
+      <div className="best-seller">
         <h2>Trending🔥</h2>
         {bestSeller ? (
-          <div>
-            <h3>{bestSeller.name}</h3>
-            <p>{bestSeller.description}</p>
+          <div className="best-seller-wrapper">
+            <div className="best-seller-image">
+              <img src={bestSeller.image} alt={bestSeller.name} />
+            </div>            
+            <div className="best-seller-text">
+              <h3>{bestSeller.name}</h3>
+              <p>{bestSeller.description}</p>
+            </div>
           </div>
         ) : (
           <p>{bestSellerMessage}</p>
         )}
       </div>
       {isAuthenticated ? (
-        <div>
+        <div className="welcome-back">
           <h2>Glad to see you again, {user.name} 👋 </h2>
           {(latestOrder !== null && typeof latestOrder === 'object' && !Array.isArray(latestOrder)) ? (
             <p>Last time you ordered: {latestOrder.items.map(orderItem => orderItem.item.name).join(', ')}</p>
@@ -84,7 +89,7 @@ export default function Home() {
           )}
         </div>
       ): (
-        <div>
+        <div className="welcome">
           <h2>Welcome to our coffee shop ☕️</h2>
           <p>Sign in to see your latest order</p>
         </div>

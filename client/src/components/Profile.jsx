@@ -9,9 +9,6 @@ export default function Profile() {
         <p>Name: {user.name}</p>
       </div>
       <div>
-        <img src={user.picture} width="70" alt="profile avatar" />
-      </div>
-      <div>
         <p>📧 Email: {user.email}</p>
       </div>
       <div>

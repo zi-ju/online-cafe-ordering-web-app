@@ -1,0 +1,61 @@
+/* General styling */
+.item-detail {
+max-width: 1000px;
+margin: 20px auto;
+padding: 20px;
+background-color: #f9f9f9;
+border: 1px solid #ddd;
+border-radius: 8px;
+display: flex;
+}
+
+.item-detail h2 {
+font-size: 24px;
+color: #333;
+margin-bottom: 10px;
+}
+
+.item-detail img {
+max-width: 100%;
+height: auto;
+margin-bottom: 15px;
+}
+
+.item-detail-text {
+width: 30%;
+}
+
+.item-detail-image {
+width: 70%;
+}
+
+.item-description {
+font-size: 16px;
+line-height: 1.5;
+color: #666;
+margin-bottom: 10px;
+}
+
+.item-price {
+font-weight: bold;
+color: #00754a; 
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+.item-detail {
+    padding: 10px;
+}
+
+.item-detail h2 {
+    font-size: 20px;
+}
+
+.item-detail img {
+    margin-bottom: 10px;
+}
+
+.item-detail p {
+    font-size: 14px;
+}
+}

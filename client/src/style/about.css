@@ -1,0 +1,19 @@
+.about-page {
+    max-width: 800px; /* Set maximum width */
+    margin: 0 auto; /* Center align content */
+    padding: 20px; /* Add padding for spacing */
+  }
+  
+  .about-page h2 {
+    font-size: 24px; /* Example font size for heading */
+    margin-bottom: 10px; /* Bottom margin for spacing */
+  }
+  
+  .about-page p {
+    line-height: 1.5; /* Adjust line height */
+  }
+  
+  .about-page address {
+    font-style: normal; /* Ensure address is not italic */
+    margin-top: 10px; /* Top margin for spacing */
+  }

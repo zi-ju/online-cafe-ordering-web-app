@@ -1,40 +1,78 @@
-.app {
-    margin: 5px;
-  }
-  
-  .title {
-    font-size: 12px;
-    border: 1px solid rgb(0, 255, 179);
-    text-align: center;
-  }
-  
-  .header {
-    width: 100%;
-    border: 1px solid orange;
-  
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    margin: 5px 0;
-  }
-  
-  .content {
-    width: 100%;
-    border: 1px solid lightskyblue;
-    margin-top: 5px;
-  }
-  
-  .menu-list {
-    list-style: none;
-    display: flex;
-    justify-content: space-evenly;
-    padding: 0;
-  }
-  
-  .menu-list li {
-    margin-right: 8px;
-  }
-  
-  .exit-button {
-    background-color: lightcoral;
-  }
+* {
+margin: 0;
+padding: 5px;
+box-sizing: border-box;
+}
+
+body {
+font-family: Arial, sans-serif;
+background-color: #f2f2f2;
+}
+
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 20px;
+}
+
+.container h1 {
+font-size: 2rem;
+color: #00754a;
+margin-bottom: 20px;
+}
+
+nav ul {
+list-style-type: none;
+display: flex;
+justify-content: center;
+}
+
+nav ul li {
+margin-right: 20px;
+}
+
+nav ul li a {
+text-decoration: none;
+color: #333;
+font-weight: bold;
+font-size: 1.2rem;
+padding: 10px 15px;
+transition: all 0.3s ease;
+}
+
+nav ul li a:hover {
+color: #00754a;
+background-color: #fff;
+}
+
+.btn-primary {
+background-color: #00754a; 
+color: #fff;
+padding: 10px 15px;
+border-radius: 5px;
+text-decoration: none;
+transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+background-color: #005d3b;
+color: #8cc1ad; 
+}
+
+
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+.container {
+  padding: 10px;
+}
+
+nav ul {
+  flex-direction: column;
+  align-items: center;
+}
+
+nav ul li {
+  margin-bottom: 10px;
+}
+}

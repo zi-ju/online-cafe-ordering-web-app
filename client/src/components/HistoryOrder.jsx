@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import '../style/historyOrder.css';
 
 export default function HistoryOrder() {
     const { user } = useAuth0();
@@ -29,34 +30,47 @@ export default function HistoryOrder() {
 
 
     return (
-      <div>
+      <div className="order-history">
         <h2>Order History</h2>
-        {sortedOrderHistory.length === 0 ? (
-          <p>No orders found.</p>
-        ) : (
-          <ul>
-            {sortedOrderHistory.map(order => (
-              <div key={order.id}>
-                <p>Order ID: {order.id}</p>
-                <p>Created At: {new Date(order.createdAt).toLocaleString()}</p>
-                <h3>Items:</h3>
-                <ul>
-                  {order.items.map(orderItem => (
-                    <li key={orderItem.id}>
-                      <p>{orderItem.item.name} - Quantity: {orderItem.quantity}</p>
-                    </li>
-                  ))}
-                </ul>
-                <h3>Item Total Price: ${order.totalPrice}</h3>
-                <h3>Delivery Information:</h3>
-                <p>Address: {order.address}</p>
-                <p>Postal Code: {order.postalCode}</p>
-                <p>Delivery Fee: ${order.deliveryFee}</p>
-                <h3>Total Price: ${parseFloat(order.totalPrice) + parseFloat(order.deliveryFee)}</h3>
-              </div>
-            ))}
-          </ul>
-        )}
+        <div className="order-list">
+          {sortedOrderHistory.length === 0 ? (
+            <p>No orders found.</p>
+          ) : (
+            <ul>
+              {sortedOrderHistory.map(order => (
+                <li key={order.id} className="order-item">
+                  <p>Order ID: {order.id}</p>
+                  <p>Created At: {new Date(order.createdAt).toLocaleString()}</p>
+                  <h3>Items:</h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {order.items.map(orderItem => (
+                        <tr key={orderItem.id}>
+                          <td>{orderItem.item.name}</td>
+                          <td>{orderItem.quantity}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="order-details">
+                    <p>Item Total Price: ${order.totalPrice}</p>
+                    <h3>Delivery Information:</h3>
+                    <p>Address: {order.address}</p>
+                    <p>Postal Code: {order.postalCode}</p>
+                    <p>Delivery Fee: ${order.deliveryFee}</p>
+                    <h3>Total Price: ${parseFloat(order.totalPrice) + parseFloat(order.deliveryFee)}</h3>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     );
 };

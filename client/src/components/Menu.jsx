@@ -3,14 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthToken } from "../AuthTokenContext";
 import { useAuth0 } from '@auth0/auth0-react';
+import '../style/menu.css';
 
 const defaultItems = [
-  { id: 1, name: 'Espresso', description: 'A good Espresso', image: 'espresso.jpg', price: 2.5},
-  { id: 2, name: 'Latte', description: 'A good Latte', image: 'latte.jpg', price: 3.5},
-  { id: 3, name: 'Cappuccino', description: 'A good Cappuccino', image: 'cappuccino.jpg', price: 4.0},
+  { id: 1, name: 'Espresso', description: 'A good Espresso', image: 'Espresso.jpg', price: 2.5},
+  { id: 2, name: 'Latte', description: 'A good Latte', image: 'Latte.jpg', price: 3.5},
+  { id: 3, name: 'Cappuccino', description: 'A good Cappuccino', image: 'Cappuccino.jpg', price: 4.0},
 ];
 
-const STORE_ADDRESS = "410 W Georgia St, Vancouver, BC V6B 1Z3, Canada";
+// const STORE_ADDRESS = "410 W Georgia St, Vancouver, BC V6B 1Z3, Canada";
 const STORE_ADDRESS_LAT = 49.2806361;
 const STORE_ADDRESS_LNG = -123.1159038;
 
@@ -175,6 +176,11 @@ export default function Menu() {
       throw new Error(`Failed to fetch user ID: ${userIdResponse.status}`);
     }
 
+    if (order.length === 0) {
+      alert('Please add items to your order.');
+      return;
+    }
+
     const data = await fetch(`${process.env.REACT_APP_API_URL}/orders`, {
       method: "POST",
       headers: {
@@ -215,62 +221,77 @@ export default function Menu() {
             </div>
           ))}
         </div>
+        <div className="my-order">
+          <h2>My Order</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {order.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>{item.quantity}</td>
+                  <td>${(item.price * item.quantity).toFixed(2)}</td>
+                  <td>
+                    <button onClick={() => increaseQuantity(item)}>+</button>
+                    <button onClick={() => decreaseQuantity(item)}>-</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p>Item Total Price: ${calculateTotalFee(order)}</p>
+        </div>        
 
-        <h2>My Order</h2>
-        <ul>
-          {order.map((item) => (
-            <li key={item.id}>
-              {item.name} - {item.quantity} = ${item.price * item.quantity}
-              <button onClick={() => increaseQuantity(item)}>+</button>
-              <button onClick={() => decreaseQuantity(item)}>-</button>
-            </li>
-          ))}
-        </ul>
-        <p>Item Total Price: ${calculateTotalFee(order)}</p>
-
-        <h2>Delivery Information</h2>
-        <form onSubmit={handleSubmit} className="address-form">
-          <div>
-            <label htmlFor="address">Address: </label>
-            <input
-              type="text"
-              id="address"
-              value={address}
-              onChange={handleAddressChange}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="postalCode">Postal Code: </label>
-            <input
-              type="text"
-              id="postalCode"
-              value={postalCode}
-              onChange={handlePostalCodeChange}
-              required
-            />
-          </div>
-          <button type="button" onClick={handleCalculateDeliveryFee}>
-            Calculate Delivery Fee
-          </button>
-          {deliveryFee !== null ? (
-            <div>
-              <p>Delivery Fee: ${deliveryFee}</p>
-              <p>Total Price With Delivery Fee: ${calculateTotalWithDeliveryFee(order, deliveryFee)}</p>
-              {isAuthenticated ? 
-          <button type="submit">Place Order</button> 
-          : 
-          <p>Please log in to place an order</p> }
+        <div className="delivery-info">
+          <h2>Delivery Information</h2>
+          <form onSubmit={handleSubmit} className="address-form">
+            <div className="form-group">
+              <label htmlFor="address">Address:</label>
+              <input
+                type="text"
+                id="address"
+                value={address}
+                onChange={handleAddressChange}
+                required
+                placeholder="Enter your address"
+              />
             </div>
-          ) : !serviceAvailable ? (
-            <p>Delivery service not available for this distance.</p>
-          ) : null}
-          {/* {isAuthenticated ? 
-          <button type="submit">Place Order</button> 
-          : 
-          <p>Please log in to place an order</p> } */}
-        </form>
-
+            <div className="form-group">
+              <label htmlFor="postalCode">Postal Code:</label>
+              <input
+                type="text"
+                id="postalCode"
+                value={postalCode}
+                onChange={handlePostalCodeChange}
+                required
+                placeholder="Enter your postal code"
+              />
+            </div>
+            <button type="button" onClick={handleCalculateDeliveryFee}>
+              Calculate Delivery Fee
+            </button>
+            {deliveryFee !== null ? (
+              <div className="delivery-details">
+                <p>Delivery Fee: ${deliveryFee}</p>
+                <p>Total Price With Delivery Fee: ${calculateTotalWithDeliveryFee(order, deliveryFee)}</p>
+                {isAuthenticated ? (
+                  <button type="submit">Place Order</button>
+                ) : (
+                  <p class="warning-message">Please log in to place an order.</p>
+                )}
+              </div>
+            ) : !serviceAvailable ? (
+              <p>Delivery service not available for this distance.</p>
+            ) : null}
+          </form>
+        </div>
       </div>
     )
   }

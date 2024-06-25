@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from './Layout';
+import '../style/itemDetail.css';
 
 export default function ItemDetail() {
   const { itemId } = useParams();
@@ -28,11 +29,16 @@ export default function ItemDetail() {
   return (
     <div>
         <Layout />
-        <h2>{item.name}</h2>
-        <img src={`${process.env.PUBLIC_URL}/${item.image}`} alt={item.name} />
-        <p>{item.description}</p>
-        <p>${item.price}</p>
-        
+        <div class="item-detail">
+          <div class="item-detail-text">
+            <h2>{item.name}</h2>
+            <p class="item-description">{item.description}</p>
+            <p class="item-price">${item.price}</p>
+          </div>
+          <div class="item-detail-image">
+            <img src={`${process.env.PUBLIC_URL}/${item.image}`} alt={item.name} />
+          </div>
+        </div>
     </div>
   );
 };
