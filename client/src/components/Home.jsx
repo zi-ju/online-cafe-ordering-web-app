@@ -61,8 +61,7 @@ export default function Home() {
     <div className="home">
       <Layout />
       <div>
-        <h2>New Arrivals✨</h2>
-        <p>Lemonade</p>
+      <img src={`${process.env.PUBLIC_URL}/Cafe.jpg`} alt="cafe" />
       </div>
       <div>
         <h2>Trending🔥</h2>

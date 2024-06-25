@@ -156,8 +156,6 @@ app.post('/orders', async (req, res) => {
     const totalPrice = orderItemsData.reduce((total, item) => {
       return total.plus(new Decimal(item.price).times(item.quantity));
     }, new Decimal(0));
-    // Add delivery fee to the total price
-    totalPrice.plus(new Decimal(deliveryFee));
 
     // Create the order
     const order = await prisma.order.create({
@@ -309,6 +307,23 @@ app.get('/items', async (req, res) => {
   }
 });
 
+// Get an item according to item id
+app.get('/items/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const item = await prisma.item.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!item) {
+      res.status(404).json({ error: 'Item not found' });
+    } else {
+      res.status(200).json(item);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // get best seller item
 app.get('/best-seller', async (req, res) => {
   try {
@@ -332,7 +347,7 @@ app.get('/best-seller', async (req, res) => {
       return res.status(200).json(bestSellerItem);
     }
 
-    return res.status(200).json({ message: 'Nothing trending this time.' });
+    return res.status(200).json({ message: 'Nothing trending at this time.' });
   } catch (error) {
     console.error('Error finding best seller item:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -381,24 +396,6 @@ app.post("/verify-user", requireAuth, async (req, res) => {
   }
 });
 
-
-// // Server acts as a proxy, forwarding the request to the Google Maps API
-// // and returning the response to the client
-// app.get('/calculate-distance', async (req, res) => {
-//   const { origin, destination, apiKey } = req.query;
-//   try {
-//     const response = await fetch(
-//       `https://maps.googleapis.com/maps/api/distancematrix/json
-//       ?origins=${encodeURIComponent(origin)}
-//       &destinations=${encodeURIComponent(destination)}
-//       &key=${apiKey}`);
-//     const data = await response.json();
-//     res.json(data);
-//   } catch (error) {
-//     console.error('Error fetching distance:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
 
 app.listen(8000, () => {
   console.log("Server running on http://localhost:8000 🎉 🚀");

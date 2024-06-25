@@ -10,6 +10,7 @@ import AuthDebugger from "./components/AuthDebugger";
 import Profile from "./components/Profile";
 import HistoryOrder from "./components/HistoryOrder";
 import NotFound from "./components/NotFound";
+import ItemDetail from './components/ItemDetail';
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import { AuthTokenProvider } from "./AuthTokenContext";
 
@@ -53,6 +54,7 @@ root.render(
               <Route path="history-order" element={<HistoryOrder />} />
               <Route path="debugger" element={<AuthDebugger />} />
             </Route>
+            <Route path="/item/:itemId" element={<ItemDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -1,5 +1,6 @@
 import Layout from "./Layout";
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthToken } from "../AuthTokenContext";
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -21,6 +22,7 @@ export default function Menu() {
   const [deliveryFee, setDeliveryFee] = useState(null);
   const [serviceAvailable, setServiceAvailable] = useState(true);
   const { accessToken } = useAuthToken();
+  const navigate = useNavigate();
   const { getAccessTokenSilently, user, isAuthenticated, isLoading } = useAuth0();
 
   useEffect(() => {
@@ -38,6 +40,10 @@ export default function Menu() {
 
     fetchItems();
   }, []);
+
+  const handleViewDetails = (itemId) => {
+    navigate(`/item/${itemId}`);
+  };
 
   const addToOrder = (item) => {
     const existingItem = order.find((orderItem) => orderItem.id === item.id);
@@ -200,11 +206,11 @@ export default function Menu() {
         <div className="menu">
           {items.map((item) => (
             <div key={item.id} className="menu-item">
-              {/* <img src={item.image} alt={item.name} /> */}
               <h2>{item.name}</h2>
+              <img src={`${process.env.PUBLIC_URL}/${item.image}`} alt={item.name} />
               <p>{item.description}</p>
               <p>${item.price}</p>
-              {/* <a href={item.detailLink}>View Details</a> */}
+              <button onClick={() => handleViewDetails(item.id)}>View Details</button>
               <button onClick={() => addToOrder(item)}>Add to Order</button>
             </div>
           ))}
@@ -220,7 +226,7 @@ export default function Menu() {
             </li>
           ))}
         </ul>
-        <p>Total: ${calculateTotalFee(order)}</p>
+        <p>Item Total Price: ${calculateTotalFee(order)}</p>
 
         <h2>Delivery Information</h2>
         <form onSubmit={handleSubmit} className="address-form">
@@ -250,15 +256,19 @@ export default function Menu() {
           {deliveryFee !== null ? (
             <div>
               <p>Delivery Fee: ${deliveryFee}</p>
-              <p>Total With Delivery Fee: {calculateTotalWithDeliveryFee(order, deliveryFee)}</p>
+              <p>Total Price With Delivery Fee: ${calculateTotalWithDeliveryFee(order, deliveryFee)}</p>
+              {isAuthenticated ? 
+          <button type="submit">Place Order</button> 
+          : 
+          <p>Please log in to place an order</p> }
             </div>
           ) : !serviceAvailable ? (
             <p>Delivery service not available for this distance.</p>
           ) : null}
-          {isAuthenticated ? 
+          {/* {isAuthenticated ? 
           <button type="submit">Place Order</button> 
           : 
-          <p>Please log in to place an order</p> }
+          <p>Please log in to place an order</p> } */}
         </form>
 
       </div>

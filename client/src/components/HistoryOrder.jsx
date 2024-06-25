@@ -47,10 +47,12 @@ export default function HistoryOrder() {
                     </li>
                   ))}
                 </ul>
-                <h3>Total Price: ${order.totalPrice}</h3>
+                <h3>Item Total Price: ${order.totalPrice}</h3>
                 <h3>Delivery Information:</h3>
                 <p>Address: {order.address}</p>
                 <p>Postal Code: {order.postalCode}</p>
+                <p>Delivery Fee: ${order.deliveryFee}</p>
+                <h3>Total Price: ${parseFloat(order.totalPrice) + parseFloat(order.deliveryFee)}</h3>
               </div>
             ))}
           </ul>
