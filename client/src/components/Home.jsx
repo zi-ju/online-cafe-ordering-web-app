@@ -5,10 +5,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Home() {
   const [bestSeller, setBestSeller] = useState(null);
-  const [bestSellerMessage, setBestSellerMessage] = useState('');
+  const [bestSellerMessage, setBestSellerMessage] = useState("");
+  const [nickname, setNickname] = useState("");
   const [latestOrder, setLatestOrder] = useState([]);
   const { user, isAuthenticated } = useAuth0();
-
 
   useEffect(() => {
     const fetchBestSeller = async () => {
@@ -35,6 +35,24 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const fetchNickname = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users?auth0Id=${(user.sub)}`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          });
+        const data = await response.json();
+        setNickname(data.nickname);
+      } catch (error) {
+        console.error("Error fetching nickname:", error);
+      }
+    };
+    fetchNickname();
+}, [user]);
+
+  useEffect(() => {
     const fetchLatestOrder = async () => {
       if (!isAuthenticated) {
         return;
@@ -47,7 +65,6 @@ export default function Home() {
           },
           });
           const latestOrder = await response.json();
-          console.log('latestOrder:', latestOrder);
           setLatestOrder(latestOrder);
       } catch (error) {
         console.error('Error fetching latest order:', error);
@@ -81,7 +98,7 @@ export default function Home() {
       </div>
       {isAuthenticated ? (
         <div className="welcome-back">
-          <h2>Glad to see you again, {user.name} 👋 </h2>
+          <h2>Glad to see you again, {nickname} 👋 </h2>
           {(latestOrder !== null && typeof latestOrder === 'object' && !Array.isArray(latestOrder)) ? (
             <p>Last time you ordered: {latestOrder.items.map(orderItem => orderItem.item.name).join(', ')}</p>
           ) : (

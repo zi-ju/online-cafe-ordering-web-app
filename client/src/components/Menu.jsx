@@ -90,6 +90,10 @@ export default function Menu() {
   };
 
   const handleCalculateDeliveryFee = async () => {
+    if (postalCode === '') {
+      alert('Please enter a valid postal code.');
+      return;
+    }
     try {
       setDeliveryFee(null);
       setServiceAvailable(true);
@@ -135,9 +139,8 @@ export default function Menu() {
       }
       setServiceAvailable(true);
       setDeliveryFee(deliveryFee.toFixed(1));
-
     } catch (error) {
-      console.error('Error calculating delivery fee:', error);
+      alert('Error calculating delivery fee. Please check if your postal code is correct.');
       setDeliveryFee(null); 
     }
   };

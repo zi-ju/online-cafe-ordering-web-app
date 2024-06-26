@@ -108,6 +108,27 @@ app.get('/users', async (req, res) => {
   }
 });
 
+// modify user nickname by auth0Id
+app.put('/users/:auth0Id/nickname', async (req, res) => {
+  const { auth0Id } = req.params;
+  const { nickname } = req.body;
+
+  if (!nickname) {
+    return res.status(400).json({ error: 'New nickname is required' });
+  }
+
+  try {
+    const user = await prisma.user.update({
+      where: { auth0Id: String(auth0Id) },
+      data: { nickname }
+    });
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating nickname:', error);
+    res.status(500).json({ error: 'An error occurred while updating the nickname' });
+  }
+});
+
 // Create a new orderItem
 app.post('/order-items', async (req, res) => {
   const { orderId, itemId, quantity } = req.body;

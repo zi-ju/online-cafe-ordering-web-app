@@ -19,6 +19,7 @@ model User {
   auth0Id      String   @unique @default("")
   name         String
   orders       Order[]
+  nickname     String   @default("default nickname")
 }
 
 model Order {
