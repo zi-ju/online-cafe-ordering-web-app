@@ -99,19 +99,34 @@ export default function Menu() {
       setServiceAvailable(true);
 
       // get lat and lng of the delivery address from postal code
-      const addressUrl = 'https://map-geocoding.p.rapidapi.com/json?address=' + encodeURIComponent(postalCode);
+      // old api (exceed limit so change to new api below)
+        // const addressUrl = 'https://map-geocoding.p.rapidapi.com/json?address=' + encodeURIComponent(postalCode);
+        // const addressOptions = {
+        //   method: 'GET',
+        //   headers: {
+        //     'x-rapidapi-key': '58cad3c0ccmsh837c4462d52b4bdp10141djsn061b068caf24',
+        //     'x-rapidapi-host': 'map-geocoding.p.rapidapi.com'
+        //   }
+        // };
+        // const addressResponse = await fetch(addressUrl, addressOptions);
+        // const addressData = await addressResponse.json();
+        // const destinationLatitude = addressData.results[0].geometry.location.lat;
+        // const destinationLongitude = addressData.results[0].geometry.location.lng;
+      // new api
+      const addressUrl = 'https://trueway-geocoding.p.rapidapi.com/Geocode?address=' + encodeURIComponent(postalCode);
       const addressOptions = {
         method: 'GET',
         headers: {
           'x-rapidapi-key': '58cad3c0ccmsh837c4462d52b4bdp10141djsn061b068caf24',
-          'x-rapidapi-host': 'map-geocoding.p.rapidapi.com'
+          'x-rapidapi-host': 'trueway-geocoding.p.rapidapi.com'
         }
       };
       const addressResponse = await fetch(addressUrl, addressOptions);
       const addressData = await addressResponse.json();
-      const destinationLatitude = addressData.results[0].geometry.location.lat;
-      const destinationLongitude = addressData.results[0].geometry.location.lng;
+      const destinationLatitude = addressData.results[0].location.lat;
+      const destinationLongitude = addressData.results[0].location.lng;
       
+      // calculate distance between store and delivery address using lat and lng data
       const distanceUrl = `https://trueway-matrix.p.rapidapi.com/CalculateDrivingMatrix?origins=${STORE_ADDRESS_LAT}%2C${STORE_ADDRESS_LNG}&destinations=${destinationLatitude}%2C${destinationLongitude}`;
       const distanceOptions = {
         method: 'GET',
@@ -161,15 +176,12 @@ export default function Menu() {
       console.error('User not authenticated or user information not available.');
       return;
     }
-    const token = accessToken || await getAccessTokenSilently();
-    const auth0Id = user.sub;
-
     // get user id from auth0 id
-    const userIdResponse = await fetch(`${process.env.REACT_APP_API_URL}/users?auth0Id=${auth0Id}`, {
+    const userIdResponse = await fetch(`${process.env.REACT_APP_API_URL}/users?auth0Id=${user.sub}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
     const userIdData = await userIdResponse.json();
