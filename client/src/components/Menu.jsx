@@ -255,7 +255,7 @@ export default function Menu() {
             <thead>
               <tr>
                 <th>Item</th>
-                <th>Quantity</th>
+                <th>Qty</th>
                 <th>Price</th>
                 <th>Actions</th>
               </tr>
