@@ -12,14 +12,14 @@ flex-direction: column;
 flex: 1;
 }
 
-.my-account .nav-list {
+.nav-list {
 list-style-type: none;
 padding: 0;
 display: flex;
 flex-direction: row; 
 }
 
-.my-account .nav-list li {
+.nav-list li {
 margin-bottom: 10px;
 }
 
@@ -33,7 +33,7 @@ font-size: 14px;
 }
 
 .outlet-container {
-width: 70%;
+width: 100%;
 margin-top: 20px;
 background-color: #fff;
 border-radius: 8px;
@@ -42,7 +42,7 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 @media screen and (min-width: 768px) {
-.my-account .nav-list {
+.nav-list {
 list-style-type: none;
 padding: 0;
 display: flex;
@@ -55,7 +55,7 @@ align-items: flex-start;
 }
 
 .outlet-container {
-width: 100%;
+width: 70%;
 margin-top: 0;
 margin-left: 20px;
 }
