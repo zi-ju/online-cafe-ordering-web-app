@@ -99,7 +99,7 @@ export default function Menu() {
       setServiceAvailable(true);
 
       // get lat and lng of the delivery address from postal code
-      // old api (exceed limit so change to new api below)
+      // old api (exceed limit, so change to new api below)
         // const addressUrl = 'https://map-geocoding.p.rapidapi.com/json?address=' + encodeURIComponent(postalCode);
         // const addressOptions = {
         //   method: 'GET',
@@ -112,19 +112,32 @@ export default function Menu() {
         // const addressData = await addressResponse.json();
         // const destinationLatitude = addressData.results[0].geometry.location.lat;
         // const destinationLongitude = addressData.results[0].geometry.location.lng;
-      // new api
-      const addressUrl = 'https://trueway-geocoding.p.rapidapi.com/Geocode?address=' + encodeURIComponent(postalCode);
+      // second api (for some postal code it is not working, so change to new api below)
+        // const addressUrl = 'https://trueway-geocoding.p.rapidapi.com/Geocode?address=' + encodeURIComponent(postalCode);
+        // const addressOptions = {
+        //   method: 'GET',
+        //   headers: {
+        //     'x-rapidapi-key': '58cad3c0ccmsh837c4462d52b4bdp10141djsn061b068caf24',
+        //     'x-rapidapi-host': 'trueway-geocoding.p.rapidapi.com'
+        //   }
+        // };
+        // const addressResponse = await fetch(addressUrl, addressOptions);
+        // const addressData = await addressResponse.json();
+        // const destinationLatitude = addressData.results[0].location.lat;
+        // const destinationLongitude = addressData.results[0].location.lng;
+      // new api (hope it works for all postal code)
+      const addressUrl = 'https://address-from-to-latitude-longitude.p.rapidapi.com/geolocationapi?address=' + encodeURIComponent(postalCode);
       const addressOptions = {
         method: 'GET',
         headers: {
           'x-rapidapi-key': '58cad3c0ccmsh837c4462d52b4bdp10141djsn061b068caf24',
-          'x-rapidapi-host': 'trueway-geocoding.p.rapidapi.com'
+          'x-rapidapi-host': 'address-from-to-latitude-longitude.p.rapidapi.com'
         }
       };
       const addressResponse = await fetch(addressUrl, addressOptions);
       const addressData = await addressResponse.json();
-      const destinationLatitude = addressData.results[0].location.lat;
-      const destinationLongitude = addressData.results[0].location.lng;
+      const destinationLatitude = addressData.Results[0].latitude;
+      const destinationLongitude = addressData.Results[0].longitude;
       
       // calculate distance between store and delivery address using lat and lng data
       const distanceUrl = `https://trueway-matrix.p.rapidapi.com/CalculateDrivingMatrix?origins=${STORE_ADDRESS_LAT}%2C${STORE_ADDRESS_LNG}&destinations=${destinationLatitude}%2C${destinationLongitude}`;
