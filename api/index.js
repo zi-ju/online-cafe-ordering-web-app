@@ -418,6 +418,11 @@ app.post("/verify-user", requireAuth, async (req, res) => {
 });
 
 
-app.listen(8000, () => {
-  console.log("Server running on http://localhost:8000 🎉 🚀");
+// app.listen(8000, () => {
+//   console.log("Server running on http://localhost:8000 🎉 🚀");
+// });
+
+const PORT = parseInt(process.env.PORT) || 8080;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT} 🎉 🚀`);
 });
