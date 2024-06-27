@@ -48,7 +48,7 @@ color: #00754a;
 }
 
 .item-detail h2 {
-    font-size: 20px;
+    font-size: 14px;
 }
 
 .item-detail img {
@@ -56,6 +56,6 @@ color: #00754a;
 }
 
 .item-detail p {
-    font-size: 14px;
+    font-size: 12px;
 }
 }

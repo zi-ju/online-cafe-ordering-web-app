@@ -68,46 +68,47 @@ background-color: #f9f9f9;
 color: #00754a; 
 }
 
-table {
+.my-order table {
 width: 90%;
 border-collapse: collapse;
 margin-bottom: 20px;
 }
 
-table th, table td {
+.my-order table th, table td {
 border: 1px solid #ccc;
 padding: 8px;
 text-align: left;
 }
 
-table th {
+.my-order table th {
 background-color: #f2f2f2;
 }
 
-table td {
+.my-order table td {
 background-color: #fff;
 }
 
-table th:first-child, table td:first-child {
+.my-order table th:first-child, table td:first-child {
 width: 40%;
 }
 
-table th:last-child, table td:last-child {
+.my-order table th:last-child, table td:last-child {
 width: 20%;
 }
 
-table td button {
+.my-order table td button {
 background-color: #00754a;
 color: #fff;
 border: none;
+width: 28px;
 padding: 5px 10px;
 border-radius: 4px;
 cursor: pointer;
-margin-right: 5px;
+margin: 5px;
 transition: background-color 0.3s ease;
 }
 
-table td button:hover {
+.my-order table td button:hover {
 background-color: #005d3b;
 }
 
@@ -153,7 +154,7 @@ border: 1px solid #ccc;
 border-radius: 4px;
 }
 
-button[type="button"],
+.form-group button[type="button"],
 button[type="submit"] {
 padding: 10px 20px;
 background-color: #00754a;
@@ -165,7 +166,7 @@ font-size: 16px;
 margin-top: 10px;
 }
 
-button[type="button"]:hover,
+.form-group button[type="button"]:hover,
 button[type="submit"]:hover {
 background-color: #005d3b; 
 }
