@@ -21,6 +21,7 @@ flex-direction: row;
 
 .nav-list li {
 margin-bottom: 10px;
+width: 5em;
 }
 
 .exit-button {
@@ -47,6 +48,11 @@ list-style-type: none;
 padding: 0;
 display: flex;
 flex-direction: column;
+}
+
+.nav-list li {
+margin-bottom: 10px;
+width: 100%;
 }
 
 .my-account-wrapper {
